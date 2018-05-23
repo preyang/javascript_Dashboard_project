@@ -1,0 +1,185 @@
+.ShowTable {
+	width: 100%;
+	height: 500px;
+	overflow: scroll;
+    border-color: black;
+	
+}
+ /* Always set the map height explicitly to define the size of the div
+       * element that contains the map. */
+      #map {
+        height: 100%;
+		width : 100%;
+
+      }
+      /* Optional: Makes the sample page fill the window. */
+      html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+      #floating-panel {
+        position: absolute;
+        top: 10px;
+        left: 25%;
+        z-index: 5;
+        background-color: #fff;
+        padding: 5px;
+        border: 1px solid #999;
+        text-align: center;
+        font-family: 'Roboto','sans-serif';
+        line-height: 30px;
+        padding-left: 10px;
+      }
+      #floating-panel {
+        background-color: #fff;
+        border: 1px solid #999;
+        left: 25%;
+        padding: 5px;
+        position: absolute;
+        top: 10px;
+        z-index: 5;
+      }
+.DropDown{
+    margin-top: 15px;
+}
+.cc
+{
+		align:center;
+}
+.TableParent {
+    border: solid;
+    border-color: black;
+    margin-top: 10px;
+    margin-left: 5px;
+    margin-right: 5px;
+	margin-bottom:20px;
+}
+.ch
+{
+	display: none;
+}
+.chart1
+{
+	width:300px;
+	height:300px;
+	margin: 20px;
+}
+.exportandmap
+{
+		margin: 15px;
+}
+#btn_AddFilter {
+    
+    width: 200px;
+    margin-top: 10px;
+}
+#btn_Statistics {
+    
+    width: 200px;
+    margin-top: 10px;
+}
+#btn_PlotChart {
+    width: 200px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+#btn_displayStatistics {
+    width: 200px;
+    margin-top: 10px;
+}
+#fcolumn{
+    margin-left:70px;
+	margin-top:20px;
+	width:90%;
+	align:center;
+}
+#checkBox {
+    margin-left:70px;
+	margin-top:20px;
+	width:90%;
+}
+#checkBox2 {
+    margin-left:70px;
+	margin-top:20px;
+	width:90%;
+	
+}
+body{
+	background-color: #FBFCFC;
+}
+
+h3 {
+	margin-left: 80px;
+	color: #C70039;
+}
+
+.nav {
+    align-content: center;
+    margin-left: 10px;
+}
+
+#filterArea {
+    display: none;
+}
+
+#statisticsArea {
+    display: none;
+}
+table { border-collapse: collapse; }
+tr { 
+    border-top: solid 1px #000; 
+    border-bottom: solid 1px #000;
+}
+
+td {
+  border-right: solid 1px #000; 
+  border-left: solid 1px #000;
+}
+
+#chartArea {
+    display: none;
+}
+
+#checkBox {
+    border: solid;
+    border-color: black;
+}
+
+#filterArea {
+    border: solid;
+    border-color: black;
+}
+
+#statisticsArea {
+    border: solid;
+    border-color: black;
+}
+
+#lineC {
+    border: solid;
+    border-color: black;
+}
+
+#barC {
+    border: solid;
+    border-color: black;
+}
+
+#pieC {
+    border: solid;
+    border-color: black;
+}
+#stackC {
+    border: solid;
+    border-color: black;
+}
+#pivotC {
+    border: solid;
+    border-color: black;
+    margin-bottom: 30px;
+}
+
+#statTable {
+    margin-top: 10px;
+}

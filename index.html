@@ -1,0 +1,380 @@
+<html>
+<head>
+	<link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+       
+      
+	<link type="text/css" rel="stylesheet" href="View/css/materialize.min.css"  media="screen,projection"/>
+	<link rel="stylesheet" type="text/css" href="View/css/main.css"/>
+	<link rel="stylesheet" href="View/css/leaflet.css" crossorigin=""/>
+	<script src = "Controller/library/js1.js"></script>           
+    <script src = "Controller/library/js2.js"></script>
+	<!--<link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.1/dist/leaflet.css" crossorigin=""/>-->
+	<script src="Controller/library/dataframe.js"></script> 
+	<script src="Controller/library/Chart.js"></script>
+	<script src = "Controller/BaseChart.js"></script>
+	<script src = "Controller/ExportDataset.js"></script>
+	<script src = "Controller/SelectDataset.js"></script>	
+	<script src = "Controller/DatasetOnMap.js"></script>	
+	<script src = "Controller/FilterByRow.js"></script>	
+	
+    <script src = "Controller/library/leaflet.js" crossorigin=""></script>
+	
+	<!--<script src="https://unpkg.com/leaflet@1.3.1/dist/leaflet.js" crossorigin=""></script>-->
+    <script>
+		dataset_name = "riten";
+		lat;
+		lon;
+		count_map =0;
+		
+	</script>
+</head>
+<body>
+	<h3 align="center">Affordable Rental Housing</h3>
+
+	<div class="nav" align="center">
+		<a class="waves-effect waves-light btn" href="#" onclick="dataset1()" id="d1">DataSet 1</a>
+		<a class="waves-effect waves-light btn" href="#" onclick="dataset2()" id="d2">DataSet 2</a>
+		<a class="waves-effect waves-light btn" href="#" onclick="dataset3()" id="d3">DataSet 3</a>
+		<a class="waves-effect waves-light btn" href="#" onclick="dataset4()" id="d4">DataSet 4</a>
+		<a class="waves-effect waves-light btn" href="#" onclick="dataset5()" id="d5">DataSet 5</a>
+		
+	</div>
+
+	
+	<div align="center" class="exportandmap">
+	<ul id = "dropdown" class = "dropdown-content">
+         <li><a href = "#" id = "d6" onclick="downloadCSV()">CSV Format</a></li>
+         <li><a href = "#!" id="d7" onclick="downloadJSON()" >JSON Format</li>
+      </ul>
+      
+      <a class = "btn dropdown-button" href = "#" data-activates = "dropdown">Export Dataset
+         <i class = "mdi-navigation-arrow-drop-down right"></i></a>		
+	
+
+	<a class="waves-effect waves-light btn" href="#" onclick="toggleHeatmap()" id="d7" >Show Heatmap for Dataset</a>
+	
+	</div>
+
+	<div align="center" border="1" class="TableParent">	
+		<div id="outputDiv" class="ShowTable"></div>
+	</div>
+	<div id="fcolumn" align="center">Filter By Columns </div>
+	<div id="checkBox" border="1" align="center" ></div>
+		
+	<div class="row">
+
+		<div class="" align="center">
+			<a class="waves-effect waves-light btn" id="btn_AddFilter" onClick="filterfunction()">Add Filter</a>
+
+		</div>
+		
+	</div>
+	<div  align="center">Filter By Row</div></div><br>
+	<div id ="scol" align="center" style="width:90%; margin-left:5%" border="1" class="TableParent">
+	  
+	</div>
+	<br>
+	<div id ="sval" align="center" style="width:90%; margin-left:5%" border="1" class="TableParent"></div>
+	<br>
+	<div id ="scat" align="center" style="width:90%; margin-left:5%" border="1" class="TableParent"></div>
+	
+	<!--<div id="checkBox2" border="1" align="center" ></div>-->
+		
+		<div class="row">
+		
+		<div class="col s6" align="right">
+			<a class="waves-effect waves-light btn" id="btn_AddFilter" onClick="filterfunctionrow()">Add Filter</a>
+		</div>
+		<div class="col s6" align="left">
+			<a class="waves-effect waves-light btn" id="btn_Statistics" onClick="addStatisticsFunction()">Add Statistics</a>
+		</div>
+		</div>
+	
+		<div  align="center">Statistics Results</div></div><br>
+		<div id ="sr" align="center" style="width:90%; margin-left:5%" border="1" class="TableParent">
+	  
+		</div>
+	
+	
+		<div align="center" class="cc">
+		<h5 align="center">Select Chart</h5>
+			
+		<ul id = "dropdownchart" class = "dropdown-content">
+         <li><a href = "#"  onclick="chartBar()" >Bar Chart</a></li>
+         <li><a href = "#" onclick="chartPie()" >Pie Chart</a></li>
+		 <li><a href = "#"onclick="chartLine()" >Line Chart</a></li>
+		 <li><a href = "#"onclick="chartDoughnut()" >Doughnut Chart</a></li>
+		</ul>
+      
+      <a class = "btn dropdown-button" href = "#" data-activates = "dropdownchart">Select Charts
+         <i class = "mdi-navigation-arrow-drop-down right"></i></a>
+		<select id="chartType" name="Chart Type">
+			<option value="line">Line</option>
+			<option value="column">Column</option>
+			<option value="bar">Bar</option>
+			<option value="pie">Pie</option>
+			<option value="doughnut">Doughnut</option>
+   	    </select>
+		
+		
+		</div>
+		<div class="cc" border=1>
+			<canvas id="barchart" class="ch"></canvas>
+		<!-- <canvas id="tempChart" class="ch"></canvas> -->
+		<canvas id="piechart" class="ch"></canvas>
+		<canvas id="linechart" class="ch"></canvas>
+		<canvas id="doughnutchart" class="ch"></canvas>
+		</div>
+		
+		<div class="cc" id="map"></div>
+		
+		<!--<a class="waves-effect waves-light btn" href="#" id="map">Data on Map</a>-->
+
+
+	<script type="text/javascript">
+		var DataFrame = dfjs.DataFrame;	
+		var columns = "columns";
+		var strColumns;
+		var dfObj;
+		var dfObj1;
+		
+		var filteredObj;
+		var selectedcolumn= "";
+		var localFobj;
+		 var map, heatmap;
+
+		
+		
+		var map, heatmap;
+		
+		function downloadCSV() {
+			if(filteredObj !=null)
+			{
+				 var exportDatacsv = new ExportDataset();
+				 exportDatacsv.downloadCSV(filteredObj,selectedcolumn);
+			}
+			else if(dfObj != null)
+			{
+				 var ExportDatacsv = new ExportDataset(dfObj,selectedcolumn);
+				 ExportDatacsv.downloadCSV(dfObj,selectedcolumn);
+			}
+			else
+			{
+				alert("Please select Dataset");
+			}
+		}
+		function downloadJSON() {
+			if(filteredObj !=null)
+			{
+				 var ExportDatajson = new ExportDataset(dfObj,selectedcolumn);
+				 ExportDatajson.downloadJSON(dfObj,selectedcolumn);
+			}
+			else if(dfObj != null)
+			{
+				 var ExportDatajson = new ExportDataset(dfObj,selectedcolumn);
+				 ExportDatajson.downloadJSON(dfObj,selectedcolumn);
+			}
+			else
+			{
+				alert("Please Select Dataset");
+			}
+		}
+		
+		function dataset1() {
+			dataset_name = "burlington_dataset";
+			lon = -73.208108;
+			lat = 44.484614;
+			document.getElementById("map").innerHTML = "";
+			if(map != undefined)
+				map.remove();
+			//count_map = count_map+1;
+			DataFrame.fromCSV('Model/Dataset/burlington_dataset.csv').then(
+				df => { 
+					dfObj = df;
+					df_map = df;
+					var arr = df.toArray();
+					var heading = df.listColumns();
+					var dataset1 =new SelectDataset(df.toArray(),df.listColumns());
+					document.getElementById("outputDiv").innerHTML = dataset1.selectdataset(arr,heading);
+					var columnselect = new ColumnDataset();
+					document.getElementById("checkBox").innerHTML = columnselect.columnDataset(columns,heading);
+				}
+			);	
+		}
+		function dataset2() {
+			dataset_name = "newyork_dataset";
+			lon = -73.986064;
+			lat = 40.716867;
+			//count_map = count_map+1;
+			document.getElementById("map").innerHTML = "";
+			if(map != undefined)
+				map.remove();
+			DataFrame.fromCSV('Model/Dataset/newyork_dataset.csv').then(
+				df => { 
+					dfObj = df;
+					df_map = df;
+					var arr = df.toArray();
+					var heading = df.listColumns();
+					var dataset2 =new SelectDataset(df.toArray(),df.listColumns());
+					document.getElementById("outputDiv").innerHTML = dataset2.selectdataset(arr,heading);
+					var columnselect = new ColumnDataset();
+					document.getElementById("checkBox").innerHTML = columnselect.columnDataset(columns,heading);
+				}
+			);	
+		}
+		function dataset3() {
+			dataset_name = "chicago_dataset";
+			lon = -87.739747;
+			lat = 41.968224;
+			//count_map = count_map+1;
+			document.getElementById("map").innerHTML = "";
+			if(map != undefined)
+				map.remove();
+			DataFrame.fromCSV('Model/Dataset/chicago_dataset.csv').then(
+				df => { 
+					dfObj = df;
+					df_map = df;
+					var arr = df.toArray();
+					var heading = df.listColumns();
+					var dataset3 =new SelectDataset(df.toArray(),df.listColumns());
+					document.getElementById("outputDiv").innerHTML = dataset3.selectdataset(arr,heading);
+					var columnselect = new ColumnDataset();
+					document.getElementById("checkBox").innerHTML = columnselect.columnDataset(columns,heading);
+				}
+			);	
+		}
+		function dataset4() {
+			dataset_name = "central_america_dataset";
+			lon = -97.377096;
+			lat = 41.441301;
+			//count_map = count_map+1;
+			document.getElementById("map").innerHTML = "";
+			if(map != undefined)
+				map.remove();
+			DataFrame.fromCSV('Model/Dataset/central_america_dataset.csv').then(
+				df => { 
+					dfObj = df;
+					df_map = df;
+					var arr = df.toArray();
+					var heading = df.listColumns();
+					var dataset4 =new SelectDataset(df.toArray(),df.listColumns());
+					document.getElementById("outputDiv").innerHTML = dataset4.selectdataset(arr,heading);
+					var columnselect = new ColumnDataset();
+					document.getElementById("checkBox").innerHTML = columnselect.columnDataset(columns,heading);
+				}
+			);	
+		}
+		function dataset5() {
+			dataset_name = "east_america_dataset";
+			lon = -86.269171;
+			lat = 33.592993;
+			//count_map = count_map+1;
+			document.getElementById("map").innerHTML = "";
+			if(map != undefined)
+				map.remove();
+			DataFrame.fromCSV('Model/Dataset/east_america_dataset.csv').then(
+				df => { 
+					dfObj = df;
+					df_map = df;
+					var arr = df.toArray();
+					var heading = df.listColumns();
+					var dataset5 =new SelectDataset(df.toArray(),df.listColumns());
+					document.getElementById("outputDiv").innerHTML = dataset5.selectdataset(arr,heading);
+					var columnselect = new ColumnDataset();
+					document.getElementById("checkBox").innerHTML = columnselect.columnDataset(columns,heading);
+				}
+			);	
+		}
+		function chartBar()
+		{	
+		 document.getElementById("barchart").style.display = 'none';
+		 document.getElementById("doughnutchart").style.display = 'none';
+		 document.getElementById("barchart").style.display = 'block';
+		 document.getElementById("linechart").style.display = 'none';
+		 document.getElementById("piechart").style.display = 'none';
+			var col = localFobj.listColumns();
+			var datatest = new DataCheck(col,localFobj);
+			var data = datatest.data(col,localFobj);
+			console.log(data);
+			var area = document.getElementById('barchart');
+			var chartbar = new ChartFactory();
+			var chartObj = chartbar.selectChart(area, data, selectedcolumn, 'bar');
+			chartObj.plotChart();
+		} 
+		function chartPie()
+		{			
+		 document.getElementById("piechart").style.display = 'none';
+	     document.getElementById("barchart").style.display = 'none';
+		 document.getElementById("linechart").style.display = 'none';
+		 document.getElementById("piechart").style.display = 'block';
+		 document.getElementById("doughnutchart").style.display = 'none';
+			var col = localFobj.listColumns();
+			var datatest = new DataCheck(col,localFobj);
+			var data = datatest.data(col,localFobj);
+			console.log(data);
+			var area = document.getElementById('piechart');
+			var chartpie = new ChartFactory();
+			var chartObj = chartpie.selectChart(area, data, selectedcolumn, 'pie');
+			chartObj.plotChart();
+		} 
+		function chartLine()
+		{
+		 document.getElementById("linechart").style.display = 'none';
+		 document.getElementById("barchart").style.display = 'none';
+		 document.getElementById("linechart").style.display = 'block';
+		 document.getElementById("piechart").style.display = 'none';
+			var col = localFobj.listColumns();
+			var datatest = new DataCheck(col,localFobj);
+			var data = datatest.data(col,localFobj);
+			console.log(data);
+			var area = document.getElementById('linechart');
+			var chartline = new ChartFactory();
+			var chartObj = chartline.selectChart(area, data, selectedcolumn, 'line');
+			chartObj.plotChart();
+		} 
+		function chartDoughnut()
+		{
+		 document.getElementById("doughnutchart").style.display = 'none';
+		 document.getElementById("barchart").style.display = 'none';
+		 document.getElementById("linechart").style.display = 'none';
+		 document.getElementById("piechart").style.display = 'none';
+		 document.getElementById("doughnutchart").style.display = 'block';
+			var col = localFobj.listColumns();
+			var datatest = new DataCheck(col,localFobj);
+			var data = datatest.data(col,localFobj);
+			console.log(data);
+			var area = document.getElementById('doughnutchart');
+			var chartdoughnut = new ChartFactory();
+			var chartObj = chartdoughnut.selectChart(area, data, selectedcolumn, 'doughnut');
+			chartObj.plotChart();
+		} 
+		function filterfunction()
+		{
+			document.getElementById("sr").innerHTML = "";
+			var col = document.getElementsByName("columns");
+			var filterrow = new FilterByRow();
+			document.getElementById("outputDiv").innerHTML= filterrow.filterfunction(col,selectedcolumn,dfObj);
+			
+			filteredObj = dfObj1;
+		}
+		
+		function addStatisticsFunction()
+		{
+			var stat = new FilterByRow();
+			document.getElementById("sr").innerHTML = stat.addStatisticsFunction(localFobj);	
+		}
+		function filterfunctionrow()
+		{
+			var rowf = new FilterByRow();
+			document.getElementById("outputDiv").innerHTML = rowf.filterfunctionrow(filteredObj);
+		}
+		
+	</script>
+	<script>
+		function toggleHeatmap(){
+			var datamap = new DatasetOnMap();
+			datamap.dataMap(lat,lon,dataset_name,'map');
+		}
+	</script>
+</body>
+</html>
